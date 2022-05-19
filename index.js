@@ -1,3 +1,5 @@
+import { powFun } from './AdvanceMod.js'
+
 function qs(selector) {
 	return document.querySelector(selector)
 }
@@ -13,10 +15,10 @@ function generateKeys() {
 	const secret2 = parseInt(qs('#keySecret2').value)
 	const gValue = parseInt(qs('#keyG').value)
 
-	const publicKeyA = gValue ** secret1 % prime
-	const publicKeyB = gValue ** secret2 % prime
-	const privateKeyA = publicKeyB ** secret1 % prime
-	const privateKeyB = publicKeyA ** secret2 % prime
+	const publicKeyA = powFun(gValue, secret1, prime)
+	const publicKeyB = powFun(gValue, secret2, prime)
+	const privateKeyA = powFun(gValue, publicKeyB, prime)
+	const privateKeyB = powFun(gValue, publicKeyA, prime)
 
 	const label1 = qs('#user1Label')
 	const label2 = qs('#user2Label')
@@ -62,12 +64,6 @@ function mod(n, m) {
 	return ((n % m) + m) % m
 }
 
-function reduceMod({ base, exponent = 1, divisor }) {
-	if (exponent === 1) {
-		const mod = base ** exponent % divisor
-		return mod
-	}
-}
 const cipherEcuation = ({ code, key, primeDivisor }) =>
 	((code + key ** 2) % primeDivisor) + 1
 
